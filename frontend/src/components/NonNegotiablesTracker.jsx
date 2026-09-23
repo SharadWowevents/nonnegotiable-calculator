@@ -20,7 +20,7 @@ export default function NonNegotiablesTracker() {
 
   // Load from local storage on mount
   useEffect(() => {
-  fetch('http://localhost:5012/api/entries')
+  fetch('/api/entries')
     .then(res => res.json())
     .then(data => setEntries(data))
     .catch(e => console.error("Failed to load entries:", e));
@@ -53,7 +53,7 @@ export default function NonNegotiablesTracker() {
   const payload = { date: currentDate, ...formData };
   
   try {
-    await fetch('http://localhost:5012/api/entries', {
+    await fetch('/api/entries', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -69,7 +69,7 @@ export default function NonNegotiablesTracker() {
 
   const handleDelete = async (dateToDelete) => {
   try {
-    await fetch(`http://localhost:5012/api/entries/${dateToDelete}`, {
+    await fetch(`/api/entries/${dateToDelete}`, {
       method: 'DELETE'
     });
     
