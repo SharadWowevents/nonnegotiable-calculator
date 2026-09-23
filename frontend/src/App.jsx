@@ -1,16 +1,15 @@
-import { useState } from 'react'
+import React, { useState, useEffect } from 'react';
+import NonNegotiablesTracker from './NonNegotiablesTracker';
+import Login from './Login';
 
-import './App.css'
-import NonNegotiablesTracker from './components/NonNegotiablesTracker'
+export default function App() {
+  const [token, setToken] = useState(localStorage.getItem('nn_token') || null);
 
-function App() {
- 
+  useEffect(() => {
+    if (token) localStorage.setItem('nn_token', token);
+    else localStorage.removeItem('nn_token');
+  }, [token]);
 
-  return (
-    <>
-      <NonNegotiablesTracker/>
-    </>
-  )
+  if (!token) return <Login setToken={setToken} />;
+  return <NonNegotiablesTracker token={token} setToken={setToken} />;
 }
-
-export default App

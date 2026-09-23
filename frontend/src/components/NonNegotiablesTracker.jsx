@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 
-
 const defaultFormState = {
   fajr: false, zuhr: false, asr: false, maghrib: false, isha: false, tahajjud: false, zikrDone: false,
   quranMinutes: '', bookName: '', bookPages: '', readingMinutes: '', exerciseMinutes: '',
@@ -12,19 +11,22 @@ const defaultFormState = {
 
 const getTodayStr = () => new Date().toISOString().slice(0, 10);
 
-export default function NonNegotiablesTracker() {
+export default function NonNegotiablesTracker({ token, setToken }) {
   const [entries, setEntries] = useState({});
   const [currentDate, setCurrentDate] = useState(getTodayStr());
   const [formData, setFormData] = useState(defaultFormState);
   const [statusMsg, setStatusMsg] = useState("");
+  const [showSettings, setShowSettings] = useState(false);
+  const [passwords, setPasswords] = useState({ old: '', new: '' });
+  const [passMsg, setPassMsg] = useState('');
 
-  // Load from local storage on mount
+  // Load from database on mount
   useEffect(() => {
-  fetch('/api/entries')
-    .then(res => res.json())
-    .then(data => setEntries(data))
-    .catch(e => console.error("Failed to load entries:", e));
-}, []);
+    fetch('/api/entries', { headers: { 'Authorization': `Bearer ${token}` } })
+      .then(res => res.json())
+      .then(data => setEntries(data))
+      .catch(e => console.error("Failed to load entries:", e));
+  }, [token]);
 
   // Update form data when current date or entries change
   useEffect(() => {
@@ -49,37 +51,61 @@ export default function NonNegotiablesTracker() {
     }));
   };
 
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch('/api/auth/change-password', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` 
+        },
+        body: JSON.stringify({ oldPassword: passwords.old, newPassword: passwords.new })
+      });
+      const data = await res.json();
+      setPassMsg(data.message || data.error);
+      if (res.ok) setPasswords({ old: '', new: '' });
+    } catch (err) {
+      setPassMsg('Error changing password');
+    }
+    setTimeout(() => setPassMsg(''), 3000);
+  };
+
   const handleSave = async () => {
-  const payload = { date: currentDate, ...formData };
-  
-  try {
-    await fetch('/api/entries', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
+    const payload = { date: currentDate, ...formData };
     
-    setEntries(prev => ({ ...prev, [currentDate]: formData }));
-    setStatusMsg("Saved ✓");
-  } catch (e) {
-    setStatusMsg("Could not save to database");
-  }
-  setTimeout(() => setStatusMsg(""), 2000);
-};
+    try {
+      await fetch('/api/entries', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json', 
+          'Authorization': `Bearer ${token}` 
+        },
+        body: JSON.stringify(payload)
+      });
+      
+      setEntries(prev => ({ ...prev, [currentDate]: formData }));
+      setStatusMsg("Saved ✓");
+    } catch (e) {
+      setStatusMsg("Could not save to database");
+    }
+    setTimeout(() => setStatusMsg(""), 2000);
+  };
 
   const handleDelete = async (dateToDelete) => {
-  try {
-    await fetch(`/api/entries/${dateToDelete}`, {
-      method: 'DELETE'
-    });
-    
-    const updatedEntries = { ...entries };
-    delete updatedEntries[dateToDelete];
-    setEntries(updatedEntries);
-  } catch (e) {
-    console.error("Failed to delete entry", e);
-  }
-};
+    try {
+      await fetch(`/api/entries/${dateToDelete}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      const updatedEntries = { ...entries };
+      delete updatedEntries[dateToDelete];
+      setEntries(updatedEntries);
+    } catch (e) {
+      console.error("Failed to delete entry", e);
+    }
+  };
 
   const getNum = (val) => {
     const n = parseFloat(val);
@@ -91,7 +117,33 @@ export default function NonNegotiablesTracker() {
 
   return (
     <div className="tracker-container">
+      {/* HEADER: Settings & Logout */}
+      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginBottom: '10px' }}>
+        <button className="navBtn" onClick={() => setShowSettings(!showSettings)}>⚙️ Settings</button>
+        <button className="navBtn" onClick={() => setToken(null)}>Log Out</button>
+      </div>
+
+      {/* CHANGE PASSWORD MODAL */}
+      {showSettings && (
+        <div className="card">
+          <h2>Change Password</h2>
+          <form onSubmit={handleChangePassword} style={{ display: 'flex', gap: '10px', alignItems: 'flex-end', flexWrap: 'wrap' }}>
+            <div className="field">
+              <label>Current Password</label>
+              <input type="password" value={passwords.old} onChange={e => setPasswords({...passwords, old: e.target.value})} required />
+            </div>
+            <div className="field">
+              <label>New Password</label>
+              <input type="password" value={passwords.new} onChange={e => setPasswords({...passwords, new: e.target.value})} required />
+            </div>
+            <button type="submit" className="saveBtn" style={{ width: 'auto', padding: '10px 20px' }}>Update</button>
+          </form>
+          {passMsg && <div className="status">{passMsg}</div>}
+        </div>
+      )}
+
       <h1>🕌 Daily Non-Negotiables</h1>
+      
       <div className="sub">Self · Marketing · Sales · Delivery · Finance · AI</div>
 
       <div className="dateRow">

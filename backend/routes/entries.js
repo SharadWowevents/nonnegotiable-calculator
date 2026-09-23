@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const Entry = require('../models/Entry');
+const auth = require('../middleware/auth');
 
 // GET all entries (Formatted as { "YYYY-MM-DD": { data } } for the React frontend)
-router.get('/', async (req, res) => {
+router.get('/', auth, async (req, res) => {
   try {
     const entriesList = await Entry.find();
     const entriesObj = {};
@@ -20,7 +21,7 @@ router.get('/', async (req, res) => {
 });
 
 // POST / Upsert a single day's entry
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
   const { date, ...data } = req.body;
   if (!date) return res.status(400).json({ error: "Date is required" });
 
@@ -38,7 +39,7 @@ router.post('/', async (req, res) => {
 });
 
 // DELETE an entry by date string
-router.delete('/:date', async (req, res) => {
+router.delete('/:date', auth,async (req, res) => {
   try {
     await Entry.findOneAndDelete({ date: req.params.date });
     res.json({ message: 'Entry deleted successfully' });
@@ -46,5 +47,9 @@ router.delete('/:date', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+
+// Change your existing routes to include the 'auth' middleware:
+
 
 module.exports = router;

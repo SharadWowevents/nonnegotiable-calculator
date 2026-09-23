@@ -10,7 +10,10 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
+// Add this under your middleware setup in server.js
+app.use('/api/auth', require('./routes/auth'));
 app.use('/api/entries', require('./routes/entries'));
+
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
