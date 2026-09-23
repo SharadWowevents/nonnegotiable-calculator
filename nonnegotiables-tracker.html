@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Daily Non-Negotiables Tracker</title>
+<style>
+:root{
+  --bg:#f7f5f2; --card:#ffffff; --text:#1f1b16; --muted:#6b625a;
+  --accent:#2f6f4f; --accent2:#b0793a; --border:#e5e0d8; --danger:#b3462c;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#141210; --card:#1e1b17; --text:#f0ece5; --muted:#a89f93;
+    --accent:#4caf7d; --accent2:#d99a52; --border:#332e28; --danger:#e07a5f;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#141210; --card:#1e1b17; --text:#f0ece5; --muted:#a89f93;
+  --accent:#4caf7d; --accent2:#d99a52; --border:#332e28; --danger:#e07a5f;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+*{box-sizing:border-box;}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  padding:16px 14px 40px;
+}
+h1{font-size:1.25rem; margin:4px 0 2px;}
+.sub{color:var(--muted); font-size:.85rem; margin-bottom:16px;}
+.dateRow{display:flex; gap:8px; align-items:center; margin-bottom:16px; flex-wrap:wrap;}
+.dateRow input[type=date]{
+  padding:8px 10px; border-radius:8px; border:1px solid var(--border);
+  background:var(--card); color:var(--text); font-size:.95rem;
+}
+.navBtn{padding:8px 12px; border-radius:8px; border:1px solid var(--border); background:var(--card); color:var(--text); cursor:pointer;}
+.card{
+  background:var(--card); border:1px solid var(--border); border-radius:14px;
+  padding:14px; margin-bottom:14px;
+}
+.card h2{font-size:1rem; margin:0 0 10px; display:flex; align-items:center; gap:8px;}
+.tag{font-size:.7rem; padding:2px 8px; border-radius:99px; background:var(--accent); color:#fff; opacity:.85;}
+.row{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:8px;}
+.field{display:flex; flex-direction:column; gap:4px; flex:1 1 130px; min-width:110px;}
+.field label{font-size:.75rem; color:var(--muted);}
+.field input, .field textarea{
+  padding:8px 9px; border-radius:8px; border:1px solid var(--border);
+  background:transparent; color:var(--text); font-size:.9rem; width:100%;
+}
+.checks{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:10px;}
+.chk{display:flex; align-items:center; gap:5px; background:var(--bg); border:1px solid var(--border); padding:6px 10px; border-radius:99px; font-size:.85rem;}
+.chk input{width:16px; height:16px;}
+textarea{min-height:54px; resize:vertical;}
+.saveBar{position:sticky; bottom:0; padding-top:10px;}
+.saveBtn{
+  width:100%; padding:13px; border:none; border-radius:12px; background:var(--accent);
+  color:#fff; font-size:1rem; font-weight:600; cursor:pointer;
+}
+.saveBtn:active{opacity:.85;}
+.status{text-align:center; font-size:.8rem; color:var(--accent); min-height:18px; margin-top:6px;}
+.histWrap{overflow-x:auto; border:1px solid var(--border); border-radius:12px;}
+table{border-collapse:collapse; width:100%; min-width:640px; font-size:.78rem;}
+th,td{padding:7px 8px; border-bottom:1px solid var(--border); text-align:left; white-space:nowrap;}
+th{color:var(--muted); font-weight:600; position:sticky; top:0; background:var(--card);}
+tr:hover td{background:rgba(128,128,128,.06);}
+.delBtn{color:var(--danger); background:none; border:none; cursor:pointer; font-size:.85rem;}
+.scoreLine{font-size:.78rem; color:var(--muted); margin-top:-2px; margin-bottom:8px;}
+</style>
+</head>
+<body>
+<h1>🕌 Daily Non-Negotiables</h1>
+<div class="sub">Self · Marketing · Sales · Delivery · Finance · AI</div>
+
+<div class="dateRow">
+  <button class="navBtn" id="prevDay">← Prev</button>
+  <input type="date" id="entryDate">
+  <button class="navBtn" id="nextDay">Next →</button>
+  <button class="navBtn" id="todayBtn">Today</button>
+</div>
+
+<!-- 1. SELF -->
+<div class="card">
+  <h2>1. Self <span class="tag">Deen &amp; growth</span></h2>
+  <div class="checks" id="prayerChecks">
+    <label class="chk"><input type="checkbox" data-f="fajr">Fajr</label>
+    <label class="chk"><input type="checkbox" data-f="zuhr">Zuhr</label>
+    <label class="chk"><input type="checkbox" data-f="asr">Asr</label>
+    <label class="chk"><input type="checkbox" data-f="maghrib">Maghrib</label>
+    <label class="chk"><input type="checkbox" data-f="isha">Isha</label>
+    <label class="chk"><input type="checkbox" data-f="tahajjud">Tahajjud</label>
+    <label class="chk"><input type="checkbox" data-f="zikrDone">Zikr done</label>
+  </div>
+  <div class="row">
+    <div class="field"><label>Quran (minutes)</label><input type="number" min="0" id="quranMinutes"></div>
+    <div class="field"><label>Book title</label><input type="text" id="bookName"></div>
+    <div class="field"><label>Pages read</label><input type="number" min="0" id="bookPages"></div>
+    <div class="field"><label>Reading time (min)</label><input type="number" min="0" id="readingMinutes"></div>
+    <div class="field"><label>Exercise (minutes)</label><input type="number" min="0" id="exerciseMinutes"></div>
+  </div>
+</div>
+
+<!-- 2. MARKETING -->
+<div class="card">
+  <h2>2. Marketing</h2>
+  <div class="checks">
+    <label class="chk"><input type="checkbox" id="contentCreated">Content created</label>
+    <label class="chk"><input type="checkbox" id="referralPlanDone">Referral planning done</label>
+  </div>
+  <div class="row">
+    <div class="field"><label>Drs visited (BDM)</label><input type="number" min="0" id="drsVisited"></div>
+    <div class="field"><label>Patients referred (from referral Drs)</label><input type="number" min="0" id="patientsReferred"></div>
+    <div class="field"><label>Instagram posts/actions</label><input type="number" min="0" id="instagramPosts"></div>
+    <div class="field"><label>GMB reviews/actions</label><input type="number" min="0" id="gmbReviews"></div>
+  </div>
+</div>
+
+<!-- 3. SALES -->
+<div class="card">
+  <h2>3. Sales</h2>
+  <div class="row">
+    <div class="field"><label>Total outpatients seen</label><input type="number" min="0" id="outpatients"></div>
+    <div class="field"><label>Surgical cases (that day)</label><input type="number" min="0" id="surgicalCasesDay"></div>
+    <div class="field"><label>Surgeries performed</label><input type="number" min="0" id="surgeriesPerformedSales"></div>
+    <div class="field"><label>Non-surgical inpatients</label><input type="number" min="0" id="nonSurgicalInpatients"></div>
+  </div>
+</div>
+
+<!-- 4. DELIVERY -->
+<div class="card">
+  <h2>4. Delivery</h2>
+  <div class="row">
+    <div class="field"><label>Surgeries performed</label><input type="number" min="0" id="surgeriesPerformedDelivery"></div>
+    <div class="field"><label>Reviews taken</label><input type="number" min="0" id="reviewsTaken"></div>
+    <div class="field"><label>Testimonials taken</label><input type="number" min="0" id="testimonialsTaken"></div>
+  </div>
+</div>
+
+<!-- 5. FINANCE -->
+<div class="card">
+  <h2>5. Finance <span class="tag">₹ / day</span></h2>
+  <div class="row">
+    <div class="field"><label>OPD reception</label><input type="number" min="0" id="finOpd"></div>
+    <div class="field"><label>Lab</label><input type="number" min="0" id="finLab"></div>
+    <div class="field"><label>Pharmacy</label><input type="number" min="0" id="finPharmacy"></div>
+    <div class="field"><label>Surgical cases</label><input type="number" min="0" id="finSurgical"></div>
+    <div class="field"><label>Non-surgical inpatients</label><input type="number" min="0" id="finNonSurgical"></div>
+  </div>
+</div>
+
+<!-- 6. AI / LEARNING -->
+<div class="card">
+  <h2>6. AI <span class="tag">Learning</span></h2>
+  <div class="field"><label>What I learned today</label><textarea id="learning"></textarea></div>
+</div>
+
+<div class="saveBar">
+  <button class="saveBtn" id="saveBtn">Save Today's Entry</button>
+  <div class="status" id="statusMsg"></div>
+</div>
+
+<div class="card">
+  <h2>History</h2>
+  <div class="histWrap">
+    <table id="histTable">
+      <thead><tr>
+        <th>Date</th><th>Prayers</th><th>Tahajjud</th><th>Quran min</th><th>Read min</th><th>Exercise min</th>
+        <th>Drs visited</th><th>Referred</th><th>Outpatients</th><th>Surgeries</th>
+        <th>OPD ₹</th><th>Total ₹</th><th></th>
+      </tr></thead>
+      <tbody id="histBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+const STORE_KEY = "nn_tracker_entries_v1";
+const fields = ["fajr","zuhr","asr","maghrib","isha","tahajjud","zikrDone",
+  "quranMinutes","bookName","bookPages","readingMinutes","exerciseMinutes",
+  "contentCreated","referralPlanDone","drsVisited","patientsReferred","instagramPosts","gmbReviews",
+  "outpatients","surgicalCasesDay","surgeriesPerformedSales","nonSurgicalInpatients",
+  "surgeriesPerformedDelivery","reviewsTaken","testimonialsTaken",
+  "finOpd","finLab","finPharmacy","finSurgical","finNonSurgical","learning"];
+
+function loadAll(){
+  try{ return JSON.parse(localStorage.getItem(STORE_KEY) || "{}"); }
+  catch(e){ return {}; }
+}
+function saveAll(data){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(data)); return true; }
+  catch(e){ return false; }
+}
+function todayStr(){
+  const d = new Date();
+  return d.toISOString().slice(0,10);
+}
+function elFor(f){ return document.getElementById(f) || document.querySelector(`[data-f="${f}"]`); }
+
+function fillForm(entry){
+  entry = entry || {};
+  fields.forEach(f=>{
+    const el = elFor(f);
+    if(!el) return;
+    if(el.type === "checkbox") el.checked = !!entry[f];
+    else el.value = entry[f] !== undefined ? entry[f] : "";
+  });
+}
+function readForm(){
+  const entry = {};
+  fields.forEach(f=>{
+    const el = elFor(f);
+    if(!el) return;
+    entry[f] = el.type === "checkbox" ? el.checked : el.value;
+  });
+  return entry;
+}
+
+const dateInput = document.getElementById("entryDate");
+const statusMsg = document.getElementById("statusMsg");
+
+function loadDate(dateStr){
+  const all = loadAll();
+  fillForm(all[dateStr]);
+}
+
+dateInput.value = todayStr();
+loadDate(dateInput.value);
+
+dateInput.addEventListener("change", ()=> loadDate(dateInput.value));
+
+document.getElementById("todayBtn").onclick = ()=>{
+  dateInput.value = todayStr();
+  loadDate(dateInput.value);
+};
+document.getElementById("prevDay").onclick = ()=>{
+  const d = new Date(dateInput.value); d.setDate(d.getDate()-1);
+  dateInput.value = d.toISOString().slice(0,10);
+  loadDate(dateInput.value);
+};
+document.getElementById("nextDay").onclick = ()=>{
+  const d = new Date(dateInput.value); d.setDate(d.getDate()+1);
+  dateInput.value = d.toISOString().slice(0,10);
+  loadDate(dateInput.value);
+};
+
+document.getElementById("saveBtn").onclick = ()=>{
+  const all = loadAll();
+  all[dateInput.value] = readForm();
+  const ok = saveAll(all);
+  statusMsg.textContent = ok ? "Saved ✓" : "Could not save (storage unavailable)";
+  renderHistory();
+  setTimeout(()=>{ statusMsg.textContent=""; }, 2000);
+};
+
+function num(v){ const n = parseFloat(v); return isNaN(n) ? 0 : n; }
+
+function renderHistory(){
+  const all = loadAll();
+  const dates = Object.keys(all).sort().reverse();
+  const body = document.getElementById("histBody");
+  body.innerHTML = "";
+  dates.forEach(d=>{
+    const e = all[d];
+    const prayerCount = ["fajr","zuhr","asr","maghrib","isha"].filter(p=>e[p]).length;
+    const totalFin = num(e.finOpd)+num(e.finLab)+num(e.finPharmacy)+num(e.finSurgical)+num(e.finNonSurgical);
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${d}</td>
+      <td>${prayerCount}/5</td>
+      <td>${e.tahajjud ? "✓" : "–"}</td>
+      <td>${e.quranMinutes||0}</td>
+      <td>${e.readingMinutes||0}</td>
+      <td>${e.exerciseMinutes||0}</td>
+      <td>${e.drsVisited||0}</td>
+      <td>${e.patientsReferred||0}</td>
+      <td>${e.outpatients||0}</td>
+      <td>${e.surgeriesPerformedSales||0}</td>
+      <td>${e.finOpd||0}</td>
+      <td>${totalFin}</td>
+      <td><button class="delBtn" data-date="${d}">delete</button></td>`;
+    body.appendChild(tr);
+  });
+  body.querySelectorAll(".delBtn").forEach(btn=>{
+    btn.onclick = ()=>{
+      const all = loadAll();
+      delete all[btn.dataset.date];
+      saveAll(all);
+      renderHistory();
+    };
+  });
+}
+renderHistory();
+</script>
+</body>
+</html>

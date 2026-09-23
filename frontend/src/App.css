@@ -1,0 +1,257 @@
+:root {
+  --bg: #f7f5f2; 
+  --card: #ffffff; 
+  --text: #1f1b16; 
+  --muted: #6b625a;
+  --accent: #2f6f4f; 
+  --accent2: #b0793a; 
+  --border: #e5e0d8; 
+  --danger: #b3462c;
+  box-sizing: border-box;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141210; 
+    --card: #1e1b17; 
+    --text: #f0ece5; 
+    --muted: #a89f93;
+    --accent: #4caf7d; 
+    --accent2: #d99a52; 
+    --border: #332e28; 
+    --danger: #e07a5f;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #141210; 
+  --card: #1e1b17; 
+  --text: #f0ece5; 
+  --muted: #a89f93;
+  --accent: #4caf7d; 
+  --accent2: #d99a52; 
+  --border: #332e28; 
+  --danger: #e07a5f;
+}
+
+.tracker-container {
+  background: var(--bg); 
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  padding: 16px 14px 40px;
+  min-height: 100vh;
+}
+
+.tracker-container * {
+  box-sizing: border-box;
+}
+
+.tracker-container h1 {
+  font-size: 1.25rem; 
+  margin: 4px 0 2px;
+}
+
+.tracker-container .sub {
+  color: var(--muted); 
+  font-size: .85rem; 
+  margin-bottom: 16px;
+}
+
+.dateRow {
+  display: flex; 
+  gap: 8px; 
+  align-items: center; 
+  margin-bottom: 16px; 
+  flex-wrap: wrap;
+}
+
+.dateRow input[type=date] {
+  padding: 8px 10px; 
+  border-radius: 8px; 
+  border: 1px solid var(--border);
+  background: var(--card); 
+  color: var(--text); 
+  font-size: .95rem;
+}
+
+.navBtn {
+  padding: 8px 12px; 
+  border-radius: 8px; 
+  border: 1px solid var(--border); 
+  background: var(--card); 
+  color: var(--text); 
+  cursor: pointer;
+}
+
+.card {
+  background: var(--card); 
+  border: 1px solid var(--border); 
+  border-radius: 14px;
+  padding: 14px; 
+  margin-bottom: 14px;
+}
+
+.card h2 {
+  font-size: 1rem; 
+  margin: 0 0 10px; 
+  display: flex; 
+  align-items: center; 
+  gap: 8px;
+}
+
+.tag {
+  font-size: .7rem; 
+  padding: 2px 8px; 
+  border-radius: 99px; 
+  background: var(--accent); 
+  color: #fff; 
+  opacity: .85;
+}
+
+.row {
+  display: flex; 
+  flex-wrap: wrap; 
+  gap: 10px; 
+  margin-bottom: 8px;
+}
+
+.field {
+  display: flex; 
+  flex-direction: column; 
+  gap: 4px; 
+  flex: 1 1 130px; 
+  min-width: 110px;
+}
+
+.field label {
+  font-size: .75rem; 
+  color: var(--muted);
+}
+
+.field input, .field textarea {
+  padding: 8px 9px; 
+  border-radius: 8px; 
+  border: 1px solid var(--border);
+  background: transparent; 
+  color: var(--text); 
+  font-size: .9rem; 
+  width: 100%;
+}
+
+.checks {
+  display: flex; 
+  flex-wrap: wrap; 
+  gap: 10px; 
+  margin-bottom: 10px;
+}
+
+.chk {
+  display: flex; 
+  align-items: center; 
+  gap: 5px; 
+  background: var(--bg); 
+  border: 1px solid var(--border); 
+  padding: 6px 10px; 
+  border-radius: 99px; 
+  font-size: .85rem;
+}
+
+.chk input {
+  width: 16px; 
+  height: 16px;
+}
+
+textarea {
+  min-height: 54px; 
+  resize: vertical;
+}
+
+.saveBar {
+  position: sticky; 
+  bottom: 0; 
+  padding-top: 10px;
+  background: var(--bg);
+  padding-bottom: 10px;
+}
+
+.saveBtn {
+  width: 100%; 
+  padding: 13px; 
+  border: none; 
+  border-radius: 12px; 
+  background: var(--accent);
+  color: #fff; 
+  font-size: 1rem; 
+  font-weight: 600; 
+  cursor: pointer;
+}
+
+.saveBtn:active {
+  opacity: .85;
+}
+
+.status {
+  text-align: center; 
+  font-size: .8rem; 
+  color: var(--accent); 
+  min-height: 18px; 
+  margin-top: 6px;
+}
+
+.histWrap {
+  overflow-x: auto; 
+  border: 1px solid var(--border); 
+  border-radius: 12px;
+}
+
+table {
+  border-collapse: collapse; 
+  width: 100%; 
+  min-width: 640px; 
+  font-size: .78rem;
+}
+
+th, td {
+  padding: 7px 8px; 
+  border-bottom: 1px solid var(--border); 
+  text-align: left; 
+  white-space: nowrap;
+}
+
+th {
+  color: var(--muted); 
+  font-weight: 600; 
+  position: sticky; 
+  top: 0; 
+  background: var(--card);
+}
+
+tr:hover td {
+  background: rgba(128,128,128,.06);
+}
+
+.delBtn {
+  color: var(--danger); 
+  background: none; 
+  border: none; 
+  cursor: pointer; 
+  font-size: .85rem;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+}
+
+/* 2. UPDATE your existing .tracker-container with max-width and margin */
+.tracker-container {
+  background: var(--bg); 
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  padding: 16px 14px 40px;
+  min-height: 100vh;
+  
+  /* --- NEW LAYOUT FIXES --- */
+  max-width: 800px;  /* Stops the UI from stretching endlessly on desktop */
+  margin: 0 auto;    /* Centers the app on the screen */
+}
