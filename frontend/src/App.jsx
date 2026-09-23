@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import NonNegotiablesTracker from './NonNegotiablesTracker';
-import Login from './Login';
+import NonNegotiablesTracker from './components/NonNegotiablesTracker';
+import Login from './components/Login';
 
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem('nn_token') || null);
